@@ -1,19 +1,20 @@
-# Gradle Kotlin Examples
+# Gradle Kotlin 
 
-Open built-in Terminal from the Android Studio or IntelliJ IDEA. 
-If you prefer, use the terminal app on your computer.
-In the terminal window, `cd` to the project root directory `dl4j-examples` if not already in.
-And then type `./gradlew NameOfExampleToRun` to run the examples as shown below.
-(_you can use IDE's run-configuration green run button, if you like._)
+## requirements
+kotlin( >= 1.1.2 )
+CUDA( == 8.0 )
+cuDNN( == 6.5 or 7.0 )
+Gradle( >= 4.0 )
 
-MLPMnistSingleLayerExample
-```
-./gradlew MLPMnistSingleLayerExample
-```
 
-MLPMnistTwoLayerExample
+## run each example
+### MnistSingleLayer
 ```
-./gradlew MLPMnistTwoLayerExample
+$ gradle MnistSingleLayer
 ```
 
+### MLPMnistTwoLayerExample
+```
+$ gradle MLPMnistTwoLayerExample
+```
 etc.
