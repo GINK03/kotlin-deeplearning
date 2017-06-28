@@ -1,6 +1,6 @@
 buildscript {
   ext {
-    dl4j_version = "0.8.0"
+    dl4j_version   = "0.8.0"
     kotlin_version = "1.1.2"
   }
   repositories {
@@ -47,16 +47,17 @@ sourceSets {
   }
 }
 
-task MLPMnistSingleLayerExample(type: JavaExec) {
+
+task MnistSingleLayer(type: JavaExec) {
+  if (project.hasProperty('args')) {    // "args" というプロパティが渡されていたら
+    args project.args.split('\\s+')   // 空白文字で split して、 run タスクの args オプションにセットする
+  }
   classpath = sourceSets.main.runtimeClasspath
-  main = "MLPMnistSingleLayerExample"
+  main = "MnistSingleLayer"
 }
 
-task MLPMnistTwoLayerExample(type: JavaExec) {
+task MnistTwoLayer(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
-  main = "MLPMnistTwoLayerExample"
+  main = "MnistTwoLayer"
 }
 
-/*
-More Java examples to be converted to Kotlin
-*/
