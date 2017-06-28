@@ -28,20 +28,43 @@ import java.nio.charset.Charset
 import java.util.Random
 import java.util.Arrays
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.google.gson.GsonBuilder
+
 import kotlin.coroutines.experimental.*
 
 object Dammy {
   fun next() = buildSequence {
+    val mm   = mutableMapOf<Int, List<Pair<List<Int>,List<Int>>>>()
+    val txts = File("data/DATASET.txt").readText().split("\n").filter { it.length != 0 }
+    val size = txts.size
+    var scope = 0
     while(true) {   
       // setting dimention size
       // first  1. batch size
       // second 2. char(or word) dimentions
       // second 3. length of sentence
-      val input : INDArray = Nd4j.zeros( 32, 20, 50)
-      val label : INDArray = Nd4j.zeros( 32, 20, 50)
       // initialize here
+      val input : INDArray = Nd4j.zeros( 32, 100, 31)
+      val label : INDArray = Nd4j.zeros( 32, 100, 31)
+      (scope..scope+31).map { count ->
+        val hl   = txts[count].split(",")
+        val head = hl[0].split(" ").map { it.toInt() }
+        val tail = hl[1].split(" ").map { it.toInt() }
+        head.mapIndexed { i,j -> 
+          input.putScalar( listOf(count-1-scope, j, i).toIntArray(), 1.0 )
+        }
+        tail.mapIndexed { i,j -> 
+          label.putScalar( listOf(count-1-scope, j, i).toIntArray(), 1.0 )
+        }
+        val last = hl[1].map { it.toInt() }
+      }
+      scope += 32
+      if(scope + 32> size)
+        scope = 0
       val ds = DataSet( input, label )
-      println( input.shape().toList() )
+      println( "shape ${input.shape().toList()}" )
       yield( ds )
     }
   }
@@ -69,12 +92,12 @@ object GravesLSTMCharModelling {
          .weightInit(WeightInit.XAVIER)
          .updater(Updater.RMSPROP)
 			.list()
-			.layer(0, GravesLSTM.Builder().nIn( 20 ).nOut(lstmLayerSize)
+			.layer(0, GravesLSTM.Builder().nIn( 100 ).nOut(lstmLayerSize)
 				.activation(Activation.TANH).build())
 			.layer(1, GravesLSTM.Builder().nIn(lstmLayerSize).nOut(lstmLayerSize)
 				.activation(Activation.TANH).build())
 			.layer(2, RnnOutputLayer.Builder(LossFunction.MCXENT).activation(Activation.SOFTMAX)
-				.nIn(lstmLayerSize).nOut( 20 ).build())
+				.nIn(lstmLayerSize).nOut( 100 ).build())
         .backpropType(BackpropType.TruncatedBPTT).tBPTTForwardLength(tbpttLength).tBPTTBackwardLength(tbpttLength)
 			.pretrain(false).backprop(true)
 			.build()
