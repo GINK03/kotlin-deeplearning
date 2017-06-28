@@ -8,10 +8,15 @@ Gradle( >= 4.0 )
 
 
 ## run each example
-### MnistSingleLayer
+### MnistSingleLayer in Train Mode
 ```
-$ gradle MnistSingleLayer
+$ gradle MnistSingleLayer -Pargs="train"
 ```
+### MnistSingleLayer in Predict Mode
+```
+$ gradle MnistSingleLayer -Pargs="predict"
+```
+
 
 ### MLPMnistTwoLayerExample
 ```
