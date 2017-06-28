@@ -22,6 +22,8 @@ import org.nd4j.linalg.api.ndarray.INDArray
 import org.nd4j.linalg.dataset.DataSet
 import org.nd4j.linalg.factory.Nd4j
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction
+import org.deeplearning4j.util.ModelSerializer
+
 
 import java.io.File
 import java.io.IOException
@@ -42,7 +44,7 @@ object Dammy {
     val txts  = File("data/DATASET.txt").readText().split("\n").filter { it.length != 0 }
     val size  = txts.size
     var scope = 0
-    (0..20000).map {   
+    (0..200000).map {   
       // setting dimention size
       // first  1. batch size
       // second 2. char(or word) dimentions
@@ -118,8 +120,15 @@ object GravesLSTMCharModelling {
     val net = MultiLayerNetwork(conf)
     net.init()
     net.setListeners( ScoreIterationListener(1) )
+
+    var counter = 0L
     for( ds in Dammy.next() ) { 
+      counter += 1L
       net.fit( ds )
+      if( counter % 100L == 0L ) {
+        val file = File("lstm_${counter}.zip") 
+        ModelSerializer.writeModel(net, file, true)
+      }
     }
     val layers = net.getLayers()
     var totalNumParams = 0
